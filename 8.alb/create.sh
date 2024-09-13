@@ -161,7 +161,7 @@ fi
 
 # Wait for 30 seconds after successfully retrieving the validation record
 echo "Waiting for 30 seconds before adding the DNS validation record..."
-sleep 30
+sleep 60
 
 # Add DNS validation record to Route 53 (Use UPSERT)
 aws route53 change-resource-record-sets \
@@ -182,6 +182,8 @@ aws route53 change-resource-record-sets \
 
 echo "DNS validation record added for $DOMAIN_NAME"
 
+echo "Waiting for 30 seconds before adding the DNS validation record..."
+sleep 30
 # 11. Create HTTPS Listener with dynamic CERTIFICATE_ARN
 aws elbv2 create-listener \
     --load-balancer-arn $LOAD_BALANCER_ARN \
