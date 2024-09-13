@@ -159,7 +159,7 @@ if [ -z "$VALIDATION_NAME" ] || [ -z "$VALIDATION_VALUE" ]; then
     exit 1
 fi
 
-# Wait for 30 seconds after successfully retrieving the validation record
+
 echo "Waiting for 120 seconds before adding the DNS validation record..."
 sleep 120
 
