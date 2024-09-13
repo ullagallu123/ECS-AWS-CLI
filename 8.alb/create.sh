@@ -160,8 +160,8 @@ if [ -z "$VALIDATION_NAME" ] || [ -z "$VALIDATION_VALUE" ]; then
 fi
 
 # Wait for 30 seconds after successfully retrieving the validation record
-echo "Waiting for 30 seconds before adding the DNS validation record..."
-sleep 60
+echo "Waiting for 120 seconds before adding the DNS validation record..."
+sleep 120
 
 # Add DNS validation record to Route 53 (Use UPSERT)
 aws route53 change-resource-record-sets \
