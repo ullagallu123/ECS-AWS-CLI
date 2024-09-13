@@ -134,6 +134,68 @@ echo "Route 53 CNAME record updated for $DOMAIN_NAME"
 
 # echo "DNS validation record added for $DOMAIN_NAME"
 
+# # Request ACM Certificate
+# CERTIFICATE_ARN=$(aws acm request-certificate \
+#     --domain-name $DOMAIN_NAME \
+#     --validation-method DNS \
+#     --options CertificateTransparencyLoggingPreference=ENABLED \
+#     --query 'CertificateArn' \
+#     --output text)
+
+# echo "ACM Certificate requested: $CERTIFICATE_ARN"
+
+# # Get DNS validation record
+# VALIDATION_RECORD=$(aws acm describe-certificate \
+#     --certificate-arn $CERTIFICATE_ARN \
+#     --query 'Certificate.DomainValidationOptions[0].ResourceRecord' \
+#     --output json)
+
+# VALIDATION_NAME=$(echo $VALIDATION_RECORD | jq -r '.Name')
+# VALIDATION_VALUE=$(echo $VALIDATION_RECORD | jq -r '.Value')
+
+# # Check if the values are null
+# if [ -z "$VALIDATION_NAME" ] || [ -z "$VALIDATION_VALUE" ]; then
+#     echo "Failed to retrieve DNS validation record. Exiting."
+#     exit 1
+# fi
+
+
+# echo "Waiting for 120 seconds before adding the DNS validation record..."
+# sleep 120
+
+# # Add DNS validation record to Route 53 (Use UPSERT)
+# aws route53 change-resource-record-sets \
+#     --hosted-zone-id $HOSTED_ZONE_ID \
+#     --change-batch '{
+#       "Changes": [{
+#         "Action": "UPSERT",
+#         "ResourceRecordSet": {
+#           "Name": "'$VALIDATION_NAME'",
+#           "Type": "CNAME",
+#           "TTL": 60,
+#           "ResourceRecords": [{
+#             "Value": "'$VALIDATION_VALUE'"
+#           }]
+#         }
+#       }]
+#     }'
+
+# echo "DNS validation record added for $DOMAIN_NAME"
+
+# echo "Waiting for 30 seconds before adding the DNS validation record..."
+# sleep 30
+# # 11. Create HTTPS Listener with dynamic CERTIFICATE_ARN
+# aws elbv2 create-listener \
+#     --load-balancer-arn $LOAD_BALANCER_ARN \
+#     --protocol HTTPS \
+#     --port 443 \
+#     --certificates CertificateArn=$CERTIFICATE_ARN \
+#     --ssl-policy ELBSecurityPolicy-2016-08 \
+#     --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
+
+# echo "HTTPS Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
+
+
 # Request ACM Certificate
 CERTIFICATE_ARN=$(aws acm request-certificate \
     --domain-name $DOMAIN_NAME \
@@ -159,7 +221,7 @@ if [ -z "$VALIDATION_NAME" ] || [ -z "$VALIDATION_VALUE" ]; then
     exit 1
 fi
 
-
+echo "Validation Record: $VALIDATION_RECORD"
 echo "Waiting for 120 seconds before adding the DNS validation record..."
 sleep 120
 
@@ -180,11 +242,27 @@ aws route53 change-resource-record-sets \
       }]
     }'
 
+if [ $? -ne 0 ]; then
+    echo "Failed to add DNS validation record. Exiting."
+    exit 1
+fi
+
 echo "DNS validation record added for $DOMAIN_NAME"
 
-echo "Waiting for 30 seconds before adding the DNS validation record..."
-sleep 30
-# 11. Create HTTPS Listener with dynamic CERTIFICATE_ARN
+# Wait for the certificate to be issued
+while true; do
+    STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
+        --query 'Certificate.Status' --output text)
+    if [ "$STATUS" == "ISSUED" ]; then
+        echo "ACM Certificate is ISSUED"
+        break
+    else
+        echo "Waiting for ACM Certificate to be ISSUED..."
+        sleep 30
+    fi
+done
+
+# Create HTTPS Listener with dynamic CERTIFICATE_ARN
 aws elbv2 create-listener \
     --load-balancer-arn $LOAD_BALANCER_ARN \
     --protocol HTTPS \
@@ -192,5 +270,10 @@ aws elbv2 create-listener \
     --certificates CertificateArn=$CERTIFICATE_ARN \
     --ssl-policy ELBSecurityPolicy-2016-08 \
     --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
+
+if [ $? -ne 0 ]; then
+    echo "Error occurred while creating HTTPS Listener. Exiting."
+    exit 1
+fi
 
 echo "HTTPS Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
