@@ -6,8 +6,8 @@ SUBNETS=("subnet-090cf41d5e0cdf437" "subnet-02f12e14846b8477c")
 SECURITY_GROUP="sg-0ca8167841704f04d"
 CLUSTER_NAME="roboshop"
 SERVICE_NAME="web-service"
-HOSTED_ZONE_ID="Z008243531Z79PQK793JX"
-DOMAIN_NAME="ecs-instana.ullagallu.cloud"
+HOSTED_ZONE_ID="Z08801502JQFVUXR02K9R"
+DOMAIN_NAME="ecs-instana.konkas.tech"
 CONTAINER_NAME="web"
 
 # 1. Create the Target Group
