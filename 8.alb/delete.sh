@@ -5,8 +5,8 @@ CLUSTER_NAME="roboshop"
 SERVICE_NAME="web-service"
 TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups --names instana --query 'TargetGroups[0].TargetGroupArn' --output text)
 LOAD_BALANCER_ARN=$(aws elbv2 describe-load-balancers --names roboshop --query 'LoadBalancers[0].LoadBalancerArn' --output text)
-HOSTED_ZONE_ID="Z008243531Z79PQK793JX"
-DOMAIN_NAME="ecs-instana.ullagallu.cloud"
+HOSTED_ZONE_ID="Z08801502JQFVUXR02K9R"
+DOMAIN_NAME="ecs-instana.konkas.tech"
 CERTIFICATE_ARN=$(aws acm list-certificates --query "CertificateSummaryList[?DomainName=='$DOMAIN_NAME'].CertificateArn" --output text)
 
 # 1. Delete HTTPS Listener
