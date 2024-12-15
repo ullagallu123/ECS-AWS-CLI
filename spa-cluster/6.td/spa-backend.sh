@@ -8,21 +8,32 @@ aws ecs register-task-definition \
     --execution-role-arn arn:aws:iam::522814728660:role/ecsSpaTaskExecution \
     --container-definitions '[
         {
-            "name": "cart",
+            "name": "backend",
             "image": "siva9666/spa-backend:v1",
-            "essential": true,
             "environment": [
                 {
                     "name": "DB_HOST",
-                    "value": "catalogue.instana"
+                    "value": "spa-db.bapatlas.site"
                 },
                 {
-                    "name": "CATALOGUE_PORT",
+                    "name": "DB_USER",
+                    "value": "crud"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "value": "CrudApp1"
+                },
+                {
+                    "name": "DB_NAME",
+                    "value": "crud_app"
+                },
+                {
+                    "name": "PORT",
                     "value": "8080"
                 },
                 {
-                    "name": "REDIS_HOST",
-                    "value": "redis.instana"
+                    "name": "ALLOWED_ORIGIN",
+                    "value": "spa.bapatlas.site"
                 }
             ],
             "portMappings": [
@@ -34,8 +45,8 @@ aws ecs register-task-definition \
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/cart",
-                    "awslogs-region": "ap-south-1",
+                    "awslogs-group": "/ecs/spa-backend",
+                    "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
             }
