@@ -63,7 +63,7 @@ fi
 
 # echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 
- 4. Update ECS Service with Load Balancer details
+# 4. Update ECS Service with Load Balancer details
 aws ecs update-service \
     --cluster $CLUSTER_NAME \
     --service $SERVICE_NAME \
