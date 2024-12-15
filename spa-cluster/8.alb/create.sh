@@ -9,6 +9,7 @@ SERVICE_NAME="backend"
 HOSTED_ZONE_ID="Z08801502JQFVUXR02K9R"
 DOMAIN_NAME="spa-backend.bapatlas.site"
 CONTAINER_NAME="backend"
+ALB_NAME="spa"
 
 # 1. Check if the Target Group exists
 TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups \
@@ -44,7 +45,7 @@ fi
 
 # 2. Create the Load Balancer
 LOAD_BALANCER_ARN=$(aws elbv2 create-load-balancer \
-    --name spa \
+    --name $ALB_NAME \
     --subnets ${SUBNETS[@]} \
     --security-groups $SECURITY_GROUP \
     --scheme internet-facing \
@@ -62,17 +63,17 @@ aws elbv2 create-listener \
 
 echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 
-# # 4. Update ECS Service with Load Balancer details
-# aws ecs update-service \
-#     --cluster $CLUSTER_NAME \
-#     --service $SERVICE_NAME \
-#     --load-balancers targetGroupArn=$TARGET_GROUP_ARN,containerName=$CONTAINER_NAME,containerPort=8080
+# 4. Update ECS Service with Load Balancer details
+aws ecs update-service \
+    --cluster $CLUSTER_NAME \
+    --service $SERVICE_NAME \
+    --load-balancers targetGroupArn=$TARGET_GROUP_ARN,containerName=$CONTAINER_NAME,containerPort=8080
 
-# echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
+echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
 
 # # 5. Get ALB DNS Name
 # ALB_DNS=$(aws elbv2 describe-load-balancers \
-#     --names roboshop \
+#     --names $ALB_NAME \
 #     --query 'LoadBalancers[0].DNSName' \
 #     --output text)
 
