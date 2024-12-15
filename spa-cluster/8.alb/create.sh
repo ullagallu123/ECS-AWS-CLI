@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Variables
 VPC_ID="vpc-057811f3f42dec09f"
 SUBNETS=("subnet-01899a28d9cd091c2" "subnet-000f164cabd01ad15")
 SECURITY_GROUP="sg-0c2026150f42233ac"
@@ -21,6 +20,15 @@ TARGET_GROUP_ARN=$(aws elbv2 create-target-group \
     --output text)
 
 echo "Target Group ARN: $TARGET_GROUP_ARN"
+
+# 1.1 Update Health Check for Target Group
+aws elbv2 modify-target-group \
+    --target-group-arn $TARGET_GROUP_ARN \
+    --health-check-path "/health" \
+    --health-check-port "8080" \
+    --health-check-protocol HTTP
+
+echo "Health check updated for Target Group ARN: $TARGET_GROUP_ARN"
 
 # 2. Create the Load Balancer
 LOAD_BALANCER_ARN=$(aws elbv2 create-load-balancer \
@@ -49,6 +57,7 @@ aws ecs update-service \
     --load-balancers targetGroupArn=$TARGET_GROUP_ARN,containerName=$CONTAINER_NAME,containerPort=8080
 
 echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
+
 
 # # 5. Get ALB DNS Name
 # ALB_DNS=$(aws elbv2 describe-load-balancers \
