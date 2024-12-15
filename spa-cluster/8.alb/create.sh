@@ -10,26 +10,37 @@ HOSTED_ZONE_ID="Z08801502JQFVUXR02K9R"
 DOMAIN_NAME="spa-backend.bapatlas.site"
 CONTAINER_NAME="backend"
 
-# 1. Create the Target Group
-TARGET_GROUP_ARN=$(aws elbv2 create-target-group \
-    --name spa \
-    --protocol HTTP \
-    --port 8080 \
-    --vpc-id $VPC_ID \
-    --target-type ip \
+# 1. Check if the Target Group exists
+TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups \
+    --names $TARGET_GROUP_NAME \
     --query 'TargetGroups[0].TargetGroupArn' \
-    --output text)
+    --output text 2>/dev/null)
 
-echo "Target Group ARN: $TARGET_GROUP_ARN"
+if [ -z "$TARGET_GROUP_ARN" ]; then
+    # Target Group does not exist, create it
+    echo "Target Group does not exist. Creating Target Group..."
+    TARGET_GROUP_ARN=$(aws elbv2 create-target-group \
+        --name $TARGET_GROUP_NAME \
+        --protocol HTTP \
+        --port 8080 \
+        --vpc-id $VPC_ID \
+        --target-type ip \
+        --query 'TargetGroups[0].TargetGroupArn' \
+        --output text)
 
-# 1.1 Update Health Check for Target Group
-aws elbv2 modify-target-group \
-    --target-group-arn $TARGET_GROUP_ARN \
-    --health-check-path "/health" \
-    --health-check-port "8080" \
-    --health-check-protocol HTTP
+    echo "Target Group ARN: $TARGET_GROUP_ARN"
 
-echo "Health check updated for Target Group ARN: $TARGET_GROUP_ARN"
+    # Update Health Check for Target Group
+    aws elbv2 modify-target-group \
+        --target-group-arn $TARGET_GROUP_ARN \
+        --health-check-path "/health" \
+        --health-check-port "8080" \
+        --health-check-protocol HTTP
+
+    echo "Health check updated for Target Group ARN: $TARGET_GROUP_ARN"
+else
+    echo "Target Group already exists. Skipping creation. ARN: $TARGET_GROUP_ARN"
+fi
 
 # 2. Create the Load Balancer
 LOAD_BALANCER_ARN=$(aws elbv2 create-load-balancer \
