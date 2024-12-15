@@ -33,12 +33,12 @@ LOAD_BALANCER_ARN=$(aws elbv2 create-load-balancer \
 
 echo "Load Balancer ARN: $LOAD_BALANCER_ARN"
 
-# # 3. Create the HTTP Listener
-# aws elbv2 create-listener \
-#     --load-balancer-arn $LOAD_BALANCER_ARN \
-#     --protocol HTTP \
-#     --port 80 \
-#     --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
+# 3. Create the HTTP Listener
+aws elbv2 create-listener \
+    --load-balancer-arn $LOAD_BALANCER_ARN \
+    --protocol HTTP \
+    --port 80 \
+    --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
 
 # echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 
