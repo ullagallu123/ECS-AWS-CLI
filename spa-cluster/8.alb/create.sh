@@ -98,15 +98,15 @@ aws route53 change-resource-record-sets \
 
 echo "Route 53 CNAME record updated for $DOMAIN_NAME"
 
-# # 7. Request ACM certificate and get CERTIFICATE_ARN dynamically
-# CERTIFICATE_ARN=$(aws acm request-certificate \
-#     --domain-name $DOMAIN_NAME \
-#     --validation-method DNS \
-#     --options CertificateTransparencyLoggingPreference=ENABLED \
-#     --query 'CertificateArn' \
-#     --output text)
+# 7. Request ACM certificate and get CERTIFICATE_ARN dynamically
+CERTIFICATE_ARN=$(aws acm request-certificate \
+    --domain-name $DOMAIN_NAME \
+    --validation-method DNS \
+    --options CertificateTransparencyLoggingPreference=ENABLED \
+    --query 'CertificateArn' \
+    --output text)
 
-# echo "ACM Certificate requested: $CERTIFICATE_ARN"
+echo "ACM Certificate requested: $CERTIFICATE_ARN"
 
 # # 8. Check ACM Certificate Status
 # while true; do
