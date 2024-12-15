@@ -40,7 +40,7 @@ aws elbv2 create-listener \
     --port 80 \
     --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
 
-# echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
+echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 
 # # 4. Update ECS Service with Load Balancer details
 # aws ecs update-service \
