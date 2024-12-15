@@ -108,33 +108,33 @@ CERTIFICATE_ARN=$(aws acm request-certificate \
 
 echo "ACM Certificate requested: $CERTIFICATE_ARN"
 
-# 8. Check ACM Certificate Status
-while true; do
-    STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
-        --query 'Certificate.Status' --output text)
-    if [ "$STATUS" == "ISSUED" ]; then
-        echo "ACM Certificate is ISSUED"
-        break
-    else
-        echo "Waiting for ACM Certificate to be ISSUED..."
-        sleep 30
-    fi
-done
+# # 8. Check ACM Certificate Status
+# while true; do
+#     STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
+#         --query 'Certificate.Status' --output text)
+#     if [ "$STATUS" == "ISSUED" ]; then
+#         echo "ACM Certificate is ISSUED"
+#         break
+#     else
+#         echo "Waiting for ACM Certificate to be ISSUED..."
+#         sleep 30
+#     fi
+# done
 
-# # 9. Get DNS validation record
-# VALIDATION_RECORD=$(aws acm describe-certificate \
-#     --certificate-arn $CERTIFICATE_ARN \
-#     --query 'Certificate.DomainValidationOptions[0].ResourceRecord' \
-#     --output json)
+# 9. Get DNS validation record
+VALIDATION_RECORD=$(aws acm describe-certificate \
+    --certificate-arn $CERTIFICATE_ARN \
+    --query 'Certificate.DomainValidationOptions[0].ResourceRecord' \
+    --output json)
 
-# VALIDATION_NAME=$(echo $VALIDATION_RECORD | jq -r '.Name')
-# VALIDATION_VALUE=$(echo $VALIDATION_RECORD | jq -r '.Value')
+VALIDATION_NAME=$(echo $VALIDATION_RECORD | jq -r '.Name')
+VALIDATION_VALUE=$(echo $VALIDATION_RECORD | jq -r '.Value')
 
-# # Check if the values are null
-# if [ -z "$VALIDATION_NAME" ] || [ -z "$VALIDATION_VALUE" ]; then
-#     echo "Failed to retrieve DNS validation record. Exiting."
-#     exit 1
-# fi
+# Check if the values are null
+if [ -z "$VALIDATION_NAME" ] || [ -z "$VALIDATION_VALUE" ]; then
+    echo "Failed to retrieve DNS validation record. Exiting."
+    exit 1
+fi
 
 # # 10. Add DNS validation record to Route 53 (Use UPSERT)
 # aws route53 change-resource-record-sets \
