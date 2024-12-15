@@ -6,7 +6,7 @@ SUBNETS=("subnet-01899a28d9cd091c2" "subnet-000f164cabd01ad15")
 SECURITY_GROUP="sg-0c2026150f42233ac"
 CLUSTER_NAME="spa"
 SERVICE_NAME="backend"
-HOSTED_ZONE_ID="Z08801502JQFVUXR02K9R"
+HOSTED_ZONE_ID="Z04410211MZ57SQOXFNI3"
 DOMAIN_NAME="spa-backend.bapatlas.site"
 CONTAINER_NAME="backend"
 ALB_NAME="spa"
@@ -79,24 +79,24 @@ ALB_DNS=$(aws elbv2 describe-load-balancers \
 
 echo "ALB DNS Name: $ALB_DNS"
 
-# # 6. Create Route 53 DNS record for ALB (Use UPSERT)
-# aws route53 change-resource-record-sets \
-#   --hosted-zone-id $HOSTED_ZONE_ID \
-#   --change-batch '{
-#     "Changes": [{
-#       "Action": "UPSERT",
-#       "ResourceRecordSet": {
-#         "Name": "'$DOMAIN_NAME'",
-#         "Type": "CNAME",
-#         "TTL": 1,
-#         "ResourceRecords": [{
-#           "Value": "'$ALB_DNS'"
-#         }]
-#       }
-#     }]
-#   }'
+# 6. Create Route 53 DNS record for ALB (Use UPSERT)
+aws route53 change-resource-record-sets \
+  --hosted-zone-id $HOSTED_ZONE_ID \
+  --change-batch '{
+    "Changes": [{
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "'$DOMAIN_NAME'",
+        "Type": "CNAME",
+        "TTL": 1,
+        "ResourceRecords": [{
+          "Value": "'$ALB_DNS'"
+        }]
+      }
+    }]
+  }'
 
-# echo "Route 53 CNAME record updated for $DOMAIN_NAME"
+echo "Route 53 CNAME record updated for $DOMAIN_NAME"
 
 # # 7. Request ACM certificate and get CERTIFICATE_ARN dynamically
 # CERTIFICATE_ARN=$(aws acm request-certificate \
