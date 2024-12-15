@@ -42,13 +42,13 @@ aws elbv2 create-listener \
 
 echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 
-# # 4. Update ECS Service with Load Balancer details
-# aws ecs update-service \
-#     --cluster $CLUSTER_NAME \
-#     --service $SERVICE_NAME \
-#     --load-balancers targetGroupArn=$TARGET_GROUP_ARN,containerName=$CONTAINER_NAME,containerPort=8080
+# 4. Update ECS Service with Load Balancer details
+aws ecs update-service \
+    --cluster $CLUSTER_NAME \
+    --service $SERVICE_NAME \
+    --load-balancers targetGroupArn=$TARGET_GROUP_ARN,containerName=$CONTAINER_NAME,containerPort=8080
 
-# echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
+echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
 
 # # 5. Get ALB DNS Name
 # ALB_DNS=$(aws elbv2 describe-load-balancers \
