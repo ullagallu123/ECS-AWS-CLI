@@ -22,25 +22,25 @@ TARGET_GROUP_ARN=$(aws elbv2 create-target-group \
 
 echo "Target Group ARN: $TARGET_GROUP_ARN"
 
-# 2. Create the Load Balancer
-LOAD_BALANCER_ARN=$(aws elbv2 create-load-balancer \
-    --name spa \
-    --subnets ${SUBNETS[@]} \
-    --security-groups $SECURITY_GROUP \
-    --scheme internet-facing \
-    --query 'LoadBalancers[0].LoadBalancerArn' \
-    --output text)
+# # 2. Create the Load Balancer
+# LOAD_BALANCER_ARN=$(aws elbv2 create-load-balancer \
+#     --name spa \
+#     --subnets ${SUBNETS[@]} \
+#     --security-groups $SECURITY_GROUP \
+#     --scheme internet-facing \
+#     --query 'LoadBalancers[0].LoadBalancerArn' \
+#     --output text)
 
-echo "Load Balancer ARN: $LOAD_BALANCER_ARN"
+# echo "Load Balancer ARN: $LOAD_BALANCER_ARN"
 
-# 3. Create the HTTP Listener
-aws elbv2 create-listener \
-    --load-balancer-arn $LOAD_BALANCER_ARN \
-    --protocol HTTP \
-    --port 80 \
-    --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
+# # 3. Create the HTTP Listener
+# aws elbv2 create-listener \
+#     --load-balancer-arn $LOAD_BALANCER_ARN \
+#     --protocol HTTP \
+#     --port 80 \
+#     --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
 
-echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
+# echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 
 # # 4. Update ECS Service with Load Balancer details
 # aws ecs update-service \
