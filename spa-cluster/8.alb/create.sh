@@ -155,13 +155,13 @@ fi
 
 # echo "DNS validation record added for $DOMAIN_NAME"
 
-# # 11. Create HTTPS Listener with dynamic CERTIFICATE_ARN
-# aws elbv2 create-listener \
-#     --load-balancer-arn $LOAD_BALANCER_ARN \
-#     --protocol HTTPS \
-#     --port 443 \
-#     --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN \
-#     --certificates CertificateArn=$CERTIFICATE_ARN \
-#     --ssl-policy ELBSecurityPolicy-2016-08
+# 11. Create HTTPS Listener with dynamic CERTIFICATE_ARN
+aws elbv2 create-listener \
+    --load-balancer-arn $LOAD_BALANCER_ARN \
+    --protocol HTTPS \
+    --port 443 \
+    --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN \
+    --certificates CertificateArn=$CERTIFICATE_ARN \
+    --ssl-policy ELBSecurityPolicy-2016-08
 
-# echo "HTTPS Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
+echo "HTTPS Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
