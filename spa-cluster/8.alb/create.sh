@@ -71,13 +71,13 @@ aws ecs update-service \
 
 echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
 
-# # 5. Get ALB DNS Name
-# ALB_DNS=$(aws elbv2 describe-load-balancers \
-#     --names $ALB_NAME \
-#     --query 'LoadBalancers[0].DNSName' \
-#     --output text)
+# 5. Get ALB DNS Name
+ALB_DNS=$(aws elbv2 describe-load-balancers \
+    --names $ALB_NAME \
+    --query 'LoadBalancers[0].DNSName' \
+    --output text)
 
-# echo "ALB DNS Name: $ALB_DNS"
+echo "ALB DNS Name: $ALB_DNS"
 
 # # 6. Create Route 53 DNS record for ALB (Use UPSERT)
 # aws route53 change-resource-record-sets \
