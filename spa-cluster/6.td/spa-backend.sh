@@ -33,7 +33,7 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "ALLOWED_ORIGIN",
-                    "value": "spa.bapatlas.site"
+                    "value": "https://spa.bapatlas.site"
                 }
             ],
             "portMappings": [
