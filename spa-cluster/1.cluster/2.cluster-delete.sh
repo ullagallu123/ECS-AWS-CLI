@@ -1,5 +1,5 @@
 #!/bin/bash
-CLUSTER_NAME="roboshop"
+CLUSTER_NAME="spa"
 
 # List and update services to set desired count to 0
 SERVICES=$(aws ecs list-services --cluster $CLUSTER_NAME --query 'serviceArns' --output text)
