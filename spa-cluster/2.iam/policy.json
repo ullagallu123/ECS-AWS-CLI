@@ -13,8 +13,16 @@
         "logs:CreateLogGroup"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:GetSecretValue"
+      ],
+      "Resource": [
+        "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend",
+        "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs"
+      ]
     }
   ]
 }
-
-  

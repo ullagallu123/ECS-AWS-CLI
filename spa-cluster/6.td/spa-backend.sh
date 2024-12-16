@@ -10,38 +10,41 @@ aws ecs register-task-definition \
         {
             "name": "backend",
             "image": "siva9666/spa-backend:v1",
-            "environment": [
+            
+            "secrets": [
                 {
                     "name": "DB_HOST",
-                    "value": "spa-db.bapatlas.site"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:DB_HOST"
                 },
                 {
                     "name": "DB_USER",
-                    "value": "crud"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:DB_USER"
                 },
                 {
                     "name": "DB_PASSWORD",
-                    "value": "CrudApp1"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:DB_PASSWORD"
                 },
                 {
                     "name": "DB_NAME",
-                    "value": "crud_app"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:DB_NAME"
                 },
                 {
                     "name": "PORT",
-                    "value": "8080"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:PORT"
                 },
                 {
                     "name": "ALLOWED_ORIGIN",
-                    "value": "https://spa.bapatlas.site"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:ALLOWED_ORIGIN"
                 }
             ],
+
             "portMappings": [
                 {
                     "containerPort": 8080,
                     "protocol": "tcp"
                 }
             ],
+
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
