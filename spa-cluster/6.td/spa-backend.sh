@@ -14,27 +14,27 @@ aws ecs register-task-definition \
             "secrets": [
                 {
                     "name": "DB_HOST",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:DB_HOST"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a:DB_HOST"
                 },
                 {
                     "name": "DB_USER",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:DB_USER"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a:DB_USER"
                 },
                 {
                     "name": "DB_PASSWORD",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:DB_PASSWORD"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a:DB_PASSWORD"
                 },
                 {
                     "name": "DB_NAME",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:DB_NAME"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a:DB_NAME"
                 },
                 {
                     "name": "PORT",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:PORT"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a:PORT"
                 },
                 {
                     "name": "ALLOWED_ORIGIN",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:spa-backend-pHyICs:ALLOWED_ORIGIN"
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a:ALLOWED_ORIGIN"
                 }
             ],
 
