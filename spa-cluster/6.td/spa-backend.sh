@@ -10,12 +10,23 @@ aws ecs register-task-definition \
         {
             "name": "backend",
             "image": "siva9666/spa-backend:v1",
-            
-            "secrets": [
+
+            "environment": [
                 {
                     "name": "DB_HOST",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a"
+                    "value": "spa-rds.bapatlas.site"
                 },
+                {
+                    "name": "ALLOWED_ORIGIN",
+                    "value": "https://spa-app.bapatlas.site"
+                },
+                {
+                    "name": "PORT",
+                    "value": "3306"
+                }
+            ],
+            "secrets": [
+                
                 {
                     "name": "DB_USER",
                     "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a"
@@ -26,14 +37,6 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "DB_NAME",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a"
-                },
-                {
-                    "name": "PORT",
-                    "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a"
-                },
-                {
-                    "name": "ALLOWED_ORIGIN",
                     "valueFrom": "arn:aws:secretsmanager:us-east-1:522814728660:secret:dev/spa/secrets-xERJ4a"
                 }
             ],
