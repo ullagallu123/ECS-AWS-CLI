@@ -113,18 +113,18 @@ CERTIFICATE_ARN=$(aws acm request-certificate \
 
 echo "ACM Certificate requested: $CERTIFICATE_ARN"
 
-# 8. Check ACM Certificate Status
-while true; do
-    STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
-        --query 'Certificate.Status' --output text)
-    if [ "$STATUS" == "ISSUED" ]; then
-        echo "ACM Certificate is ISSUED"
-        break
-    else
-        echo "Waiting for ACM Certificate to be ISSUED..."
-        sleep 30
-    fi
-done
+# # 8. Check ACM Certificate Status
+# while true; do
+#     STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
+#         --query 'Certificate.Status' --output text)
+#     if [ "$STATUS" == "ISSUED" ]; then
+#         echo "ACM Certificate is ISSUED"
+#         break
+#     else
+#         echo "Waiting for ACM Certificate to be ISSUED..."
+#         sleep 30
+#     fi
+# done
 
 # # 9. Get DNS validation record
 # VALIDATION_RECORD=$(aws acm describe-certificate \
