@@ -43,25 +43,25 @@ else
     echo "Target Group already exists. Skipping creation. ARN: $TARGET_GROUP_ARN"
 fi
 
-# # 2. Create the Load Balancer
-# LOAD_BALANCER_ARN=$(aws elbv2 create-load-balancer \
-#     --name $ALB_NAME \
-#     --subnets ${SUBNETS[@]} \
-#     --security-groups $SECURITY_GROUP \
-#     --scheme internet-facing \
-#     --query 'LoadBalancers[0].LoadBalancerArn' \
-#     --output text)
+# 2. Create the Load Balancer
+LOAD_BALANCER_ARN=$(aws elbv2 create-load-balancer \
+    --name $ALB_NAME \
+    --subnets ${SUBNETS[@]} \
+    --security-groups $SECURITY_GROUP \
+    --scheme internet-facing \
+    --query 'LoadBalancers[0].LoadBalancerArn' \
+    --output text)
 
-# echo "Load Balancer ARN: $LOAD_BALANCER_ARN"
+echo "Load Balancer ARN: $LOAD_BALANCER_ARN"
 
-# # 3. Create the HTTP Listener
-# aws elbv2 create-listener \
-#     --load-balancer-arn $LOAD_BALANCER_ARN \
-#     --protocol HTTP \
-#     --port 80 \
-#     --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
+# 3. Create the HTTP Listener
+aws elbv2 create-listener \
+    --load-balancer-arn $LOAD_BALANCER_ARN \
+    --protocol HTTP \
+    --port 80 \
+    --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN
 
-# echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
+echo "HTTP Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 
 # 4. Update ECS Service with Load Balancer details
 aws ecs update-service \
@@ -71,55 +71,55 @@ aws ecs update-service \
 
 echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
 
-# # 5. Get ALB DNS Name
-# ALB_DNS=$(aws elbv2 describe-load-balancers \
-#     --names $ALB_NAME \
-#     --query 'LoadBalancers[0].DNSName' \
-#     --output text)
+# 5. Get ALB DNS Name
+ALB_DNS=$(aws elbv2 describe-load-balancers \
+    --names $ALB_NAME \
+    --query 'LoadBalancers[0].DNSName' \
+    --output text)
 
-# echo "ALB DNS Name: $ALB_DNS"
+echo "ALB DNS Name: $ALB_DNS"
 
-# # 6. Create Route 53 DNS record for ALB (Use UPSERT)
-# aws route53 change-resource-record-sets \
-#   --hosted-zone-id $HOSTED_ZONE_ID \
-#   --change-batch '{
-#     "Changes": [{
-#       "Action": "UPSERT",
-#       "ResourceRecordSet": {
-#         "Name": "'$DOMAIN_NAME'",
-#         "Type": "CNAME",
-#         "TTL": 1,
-#         "ResourceRecords": [{
-#           "Value": "'$ALB_DNS'"
-#         }]
-#       }
-#     }]
-#   }'
+# 6. Create Route 53 DNS record for ALB (Use UPSERT)
+aws route53 change-resource-record-sets \
+  --hosted-zone-id $HOSTED_ZONE_ID \
+  --change-batch '{
+    "Changes": [{
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "'$DOMAIN_NAME'",
+        "Type": "CNAME",
+        "TTL": 1,
+        "ResourceRecords": [{
+          "Value": "'$ALB_DNS'"
+        }]
+      }
+    }]
+  }'
 
-# echo "Route 53 CNAME record updated for $DOMAIN_NAME"
+echo "Route 53 CNAME record updated for $DOMAIN_NAME"
 
-# # 7. Request ACM certificate and get CERTIFICATE_ARN dynamically
-# CERTIFICATE_ARN=$(aws acm request-certificate \
-#     --domain-name $DOMAIN_NAME \
-#     --validation-method DNS \
-#     --options CertificateTransparencyLoggingPreference=ENABLED \
-#     --query 'CertificateArn' \
-#     --output text)
+# 7. Request ACM certificate and get CERTIFICATE_ARN dynamically
+CERTIFICATE_ARN=$(aws acm request-certificate \
+    --domain-name $DOMAIN_NAME \
+    --validation-method DNS \
+    --options CertificateTransparencyLoggingPreference=ENABLED \
+    --query 'CertificateArn' \
+    --output text)
 
-# echo "ACM Certificate requested: $CERTIFICATE_ARN"
+echo "ACM Certificate requested: $CERTIFICATE_ARN"
 
-# # 8. Check ACM Certificate Status
-# while true; do
-#     STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
-#         --query 'Certificate.Status' --output text)
-#     if [ "$STATUS" == "ISSUED" ]; then
-#         echo "ACM Certificate is ISSUED"
-#         break
-#     else
-#         echo "Waiting for ACM Certificate to be ISSUED..."
-#         sleep 30
-#     fi
-# done
+# 8. Check ACM Certificate Status
+while true; do
+    STATUS=$(aws acm describe-certificate --certificate-arn $CERTIFICATE_ARN \
+        --query 'Certificate.Status' --output text)
+    if [ "$STATUS" == "ISSUED" ]; then
+        echo "ACM Certificate is ISSUED"
+        break
+    else
+        echo "Waiting for ACM Certificate to be ISSUED..."
+        sleep 30
+    fi
+done
 
 # # 9. Get DNS validation record
 # VALIDATION_RECORD=$(aws acm describe-certificate \
@@ -136,34 +136,33 @@ echo "ECS Service updated with Target Group ARN: $TARGET_GROUP_ARN"
 #     exit 1
 # fi
 
-# # 10. Add DNS validation record to Route 53 (Use UPSERT)
-# aws route53 change-resource-record-sets \
-#     --hosted-zone-id $HOSTED_ZONE_ID \
-#     --change-batch '{
-#       "Changes": [{
-#         "Action": "UPSERT",
-#         "ResourceRecordSet": {
-#           "Name": "'$VALIDATION_NAME'",
-#           "Type": "CNAME",
-#           "TTL": 60,
-#           "ResourceRecords": [{
-#             "Value": "'$VALIDATION_VALUE'"
-#           }]
-#         }
-#       }]
-#     }'
+# 10. Add DNS validation record to Route 53 (Use UPSERT)
+aws route53 change-resource-record-sets \
+    --hosted-zone-id $HOSTED_ZONE_ID \
+    --change-batch '{
+      "Changes": [{
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "'$VALIDATION_NAME'",
+          "Type": "CNAME",
+          "TTL": 60,
+          "ResourceRecords": [{
+            "Value": "'$VALIDATION_VALUE'"
+          }]
+        }
+      }]
+    }'
 
-# echo "DNS validation record added for $DOMAIN_NAME"
+echo "DNS validation record added for $DOMAIN_NAME"
 
-# # 11. Create HTTPS Listener with dynamic CERTIFICATE_ARN
-# aws elbv2 create-listener \
-#     --load-balancer-arn $LOAD_BALANCER_ARN \
-#     --protocol HTTPS \
-#     --port 443 \
-#     --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN \
-#     --certificates CertificateArn=$CERTIFICATE_ARN \
-#     --ssl-policy ELBSecurityPolicy-2016-08
+# 11. Create HTTPS Listener with dynamic CERTIFICATE_ARN
+aws elbv2 create-listener \
+    --load-balancer-arn $LOAD_BALANCER_ARN \
+    --protocol HTTPS \
+    --port 443 \
+    --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN \
+    --certificates CertificateArn=$CERTIFICATE_ARN \
+    --ssl-policy ELBSecurityPolicy-2016-08
 
-# echo "HTTPS Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
+echo "HTTPS Listener created for Load Balancer ARN: $LOAD_BALANCER_ARN"
 
-#
