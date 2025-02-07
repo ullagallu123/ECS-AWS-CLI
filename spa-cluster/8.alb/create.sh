@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Variables
 VPC_ID="vpc-057811f3f42dec09f"
 SUBNETS=("subnet-01899a28d9cd091c2" "subnet-000f164cabd01ad15")
@@ -10,30 +9,36 @@ HOSTED_ZONE_ID="Z04410211MZ57SQOXFNI3"
 DOMAIN_NAME="spa-backend.bapatlas.site"
 CONTAINER_NAME="backend"
 ALB_NAME="spa"
+TARGET_GROUP_NAME="${SERVICE_NAME}"  # Define missing variable
 
 # 1. Check if the Target Group exists
 TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups \
-    --names $TARGET_GROUP_NAME \
+    --names "$TARGET_GROUP_NAME" \
     --query 'TargetGroups[0].TargetGroupArn' \
     --output text 2>/dev/null)
 
-if [ -z "$TARGET_GROUP_ARN" ]; then
+if [[ -z "$TARGET_GROUP_ARN" || "$TARGET_GROUP_ARN" == "None" ]]; then
     # Target Group does not exist, create it
     echo "Target Group does not exist. Creating Target Group..."
     TARGET_GROUP_ARN=$(aws elbv2 create-target-group \
-        --name $TARGET_GROUP_NAME \
+        --name "$TARGET_GROUP_NAME" \
         --protocol HTTP \
         --port 8080 \
-        --vpc-id $VPC_ID \
+        --vpc-id "$VPC_ID" \
         --target-type ip \
         --query 'TargetGroups[0].TargetGroupArn' \
         --output text)
+
+    if [[ -z "$TARGET_GROUP_ARN" || "$TARGET_GROUP_ARN" == "None" ]]; then
+        echo "Failed to create Target Group. Exiting."
+        exit 1
+    fi
 
     echo "Target Group ARN: $TARGET_GROUP_ARN"
 
     # Update Health Check for Target Group
     aws elbv2 modify-target-group \
-        --target-group-arn $TARGET_GROUP_ARN \
+        --target-group-arn "$TARGET_GROUP_ARN" \
         --health-check-path "/health" \
         --health-check-port "8080" \
         --health-check-protocol HTTP
