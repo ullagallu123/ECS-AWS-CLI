@@ -9,7 +9,7 @@ aws ecs register-task-definition \
     --container-definitions '[
         {
             "name": "backend",
-            "image": "siva9666/spa-backend:v1",
+            "image": "siva9666/spa-crud:v1",
             "environment": [
                 {
                     "name": "DB_HOST",
@@ -21,15 +21,11 @@ aws ecs register-task-definition \
                 },
                 {
                     "name": "DB_PASSWORD",
-                    "value": "CrudApp1"
+                    "value": "CrudApp@1"
                 },
                 {
                     "name": "DB_NAME",
                     "value": "crud_app"
-                },
-                {
-                    "name": "PORT",
-                    "value": "3306"
                 },
                 {
                     "name": "ALLOWED_ORIGIN",
