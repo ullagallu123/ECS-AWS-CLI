@@ -9,7 +9,7 @@ aws ecs register-task-definition \
     --container-definitions '[
         {
             "name": "backend",
-            "image": "siva9666/spa-crud:v1",
+            "image": "siva9666/hello:v1",
             "environment": [
                 {
                     "name": "DB_HOST",
