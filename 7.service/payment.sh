@@ -5,5 +5,5 @@ aws ecs create-service \
     --task-definition payment \
     --desired-count 1 \
     --launch-type FARGATE \
-    --network-configuration "awsvpcConfiguration={subnets=[subnet-090cf41d5e0cdf437],securityGroups=[sg-0ca8167841704f04d],assignPublicIp=ENABLED}" \
-    --service-registries "registryArn=arn:aws:servicediscovery:ap-south-1:4273-6630-1535:service/srv-g4np4jtg2t7s5var"
+    --network-configuration "awsvpcConfiguration={subnets=[subnet-01899a28d9cd091c2],securityGroups=[sg-0c2026150f42233ac],assignPublicIp=ENABLED}" \
+    --service-registries "registryArn=arn:aws:servicediscovery:us-east-1:522814728660:service/srv-axmjmcpwpx2fywys"
