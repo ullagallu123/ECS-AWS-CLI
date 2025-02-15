@@ -5,7 +5,7 @@ aws ecs register-task-definition \
     --requires-compatibilities FARGATE \
     --cpu "256" \
     --memory "512" \
-    --execution-role-arn arn:aws:iam::427366301535:role/ecsTaskExecutionRole1 \
+    --execution-role-arn arn:aws:iam::522814728660:role/ecsTaskExecutionRole1 \
     --container-definitions '[
         {
             "name": "user",
@@ -35,7 +35,7 @@ aws ecs register-task-definition \
                 "logDriver": "awslogs",
                 "options": {
                     "awslogs-group": "/ecs/user",
-                    "awslogs-region": "ap-south-1",
+                    "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
             }
